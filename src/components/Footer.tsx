@@ -6,22 +6,13 @@ const footerLinks = [
   { label: "Terms of Service", href: "/terms" },
 ] as const;
 
-const subjectLinks = [
-  "Algebra",
-  "Calculus",
-  "Geometry",
-  "Trigonometry",
-  "Statistics",
-  "Linear Algebra",
-] as const;
-
 export function Footer() {
   return (
     <footer className="bg-foreground text-white">
       <div className="mx-auto max-w-6xl px-4 py-16">
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-10">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
           {/* Brand */}
-          <div className="md:col-span-2">
+          <div>
             <Link href="/" className="flex items-center gap-2 text-lg font-bold mb-4">
               <Logo size={32} />
               <span>Free PhotoMath AI</span>
@@ -31,27 +22,8 @@ export function Footer() {
             </p>
           </div>
 
-          {/* Subjects */}
-          <div>
-            <h3 className="font-semibold text-sm uppercase tracking-wider mb-4 text-gray-300">
-              Subjects
-            </h3>
-            <ul className="space-y-2.5">
-              {subjectLinks.map((subject) => (
-                <li key={subject}>
-                  <Link
-                    href="#subjects"
-                    className="text-sm text-gray-400 hover:text-white transition-colors"
-                  >
-                    {subject}
-                  </Link>
-                </li>
-              ))}
-            </ul>
-          </div>
-
           {/* Legal */}
-          <div>
+          <div className="md:text-right">
             <h3 className="font-semibold text-sm uppercase tracking-wider mb-4 text-gray-300">
               Legal
             </h3>

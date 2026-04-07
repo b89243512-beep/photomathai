@@ -168,19 +168,18 @@ export default function Home() {
 
       <main>
         {/* Hero Section */}
-        <section className="gradient-hero-subtle py-12 md:py-16" id="solver">
+        <section className="gradient-hero-subtle py-8 md:py-10" id="solver">
           <div className="max-w-4xl mx-auto px-4 text-center">
             <h1 className="text-4xl md:text-5xl font-extrabold text-foreground leading-tight">
               Free PhotoMath AI{" "}
               <span className="gradient-text">Math Problem Solver</span>
             </h1>
-            <p className="text-base md:text-lg text-muted mt-3 max-w-2xl mx-auto leading-relaxed">
-              Snap a photo of any math problem and get instant, step-by-step solutions.
-              Free PhotoMath AI handles algebra, calculus, geometry, trigonometry, and more — no sign-up needed. Simply upload an image or type your question and let our AI explain every step clearly.
+            <p className="text-sm md:text-base text-muted mt-2 max-w-xl mx-auto leading-relaxed">
+              Snap a photo of any math problem and get instant, step-by-step solutions. Algebra, calculus, geometry, trigonometry and more — free, no sign-up needed.
             </p>
 
             {/* Chat Bar & Upload Area */}
-            <div className="mt-6 max-w-2xl mx-auto space-y-4">
+            <div className="mt-4 max-w-2xl mx-auto space-y-3">
               {/* Search-style Input Bar */}
               <div className="bg-white/70 backdrop-blur-sm rounded-full border border-border/80 shadow-lg px-5 py-2.5 flex items-center gap-3">
                 <input
@@ -207,23 +206,23 @@ export default function Home() {
               </div>
 
               {/* Drop Zone */}
-              <div className="upload-area rounded-2xl py-10">
-                <div className="flex flex-col items-center gap-3">
-                  <div className="w-14 h-14 rounded-xl bg-primary/5 flex items-center justify-center">
-                    <Image className="w-7 h-7 text-muted/40" />
+              <div className="upload-area rounded-2xl py-6">
+                <div className="flex flex-col items-center gap-2">
+                  <div className="w-10 h-10 rounded-lg bg-primary/5 flex items-center justify-center">
+                    <Image className="w-5 h-5 text-muted/40" />
                   </div>
-                  <p className="text-muted text-base">
+                  <p className="text-muted text-sm">
                     Drag Image or{" "}
                     <span className="font-semibold text-foreground cursor-pointer hover:text-primary transition-colors">
                       Click Here
                     </span>{" "}
                     to upload
                   </p>
-                  <p className="text-muted/50 text-sm flex items-center gap-1.5">
+                  <p className="text-muted/50 text-xs flex items-center gap-1.5">
                     Command{" "}
-                    <kbd className="px-1.5 py-0.5 rounded bg-surface border border-border text-xs font-mono">&#8984;</kbd>
+                    <kbd className="px-1.5 py-0.5 rounded bg-surface border border-border text-[10px] font-mono">&#8984;</kbd>
                     {" "}+{" "}
-                    <kbd className="px-1.5 py-0.5 rounded bg-surface border border-border text-xs font-mono">V</kbd>
+                    <kbd className="px-1.5 py-0.5 rounded bg-surface border border-border text-[10px] font-mono">V</kbd>
                     {" "}to paste
                   </p>
                 </div>
@@ -231,14 +230,14 @@ export default function Home() {
             </div>
 
             {/* Stats */}
-            <div className="mt-8 grid grid-cols-2 md:grid-cols-4 gap-4">
+            <div className="mt-5 grid grid-cols-4 gap-3 max-w-2xl mx-auto">
               {stats.map((stat) => (
-                <div key={stat.label} className="stat-card">
-                  <stat.icon className="w-6 h-6 text-primary mx-auto mb-2" />
-                  <div className="text-2xl md:text-3xl font-bold text-foreground">
+                <div key={stat.label} className="text-center py-3">
+                  <stat.icon className="w-5 h-5 text-primary mx-auto mb-1" />
+                  <div className="text-xl md:text-2xl font-bold text-foreground">
                     {stat.value}
                   </div>
-                  <div className="text-xs text-muted mt-1 uppercase tracking-wide">
+                  <div className="text-[10px] text-muted mt-0.5 uppercase tracking-wide">
                     {stat.label}
                   </div>
                 </div>

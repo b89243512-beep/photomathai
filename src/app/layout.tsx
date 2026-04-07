@@ -9,7 +9,11 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
-  title: "Free PhotoMath AI - Solve Any Math Problem from a Photo Instantly",
+  metadataBase: new URL("https://photomathai.com"),
+  title: {
+    default: "Free PhotoMath AI - Solve Any Math Problem from a Photo Instantly",
+    template: "%s | Free PhotoMath AI",
+  },
   description:
     "Free PhotoMath AI solves math problems from photos instantly with step-by-step solutions. Upload a photo of any algebra, calculus, geometry or statistics problem and get detailed explanations for free.",
   keywords: [
@@ -53,6 +57,10 @@ export const metadata: Metadata = {
     icon: "/logo.svg",
     apple: "/logo.svg",
   },
+  other: {
+    "mobile-web-app-capable": "yes",
+  },
+  category: "education",
 };
 
 export default function RootLayout({
