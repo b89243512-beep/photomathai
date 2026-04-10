@@ -12,7 +12,7 @@ import {
 const navLinks = [
   { href: "#features", label: "Features" },
   { href: "#how-it-works", label: "How It Works" },
-  { href: "#subjects", label: "Subjects" },
+  { href: "/calculator", label: "Calculator" },
   { href: "#faq", label: "FAQ" },
 ] as const;
 
