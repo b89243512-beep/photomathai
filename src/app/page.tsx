@@ -1,6 +1,7 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useRef, useCallback } from "react";
+import { useRouter } from "next/navigation";
 import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
 import {
@@ -20,6 +21,8 @@ import {
   SendHorizonal,
   Star,
   Clock,
+  Loader2,
+  X,
 } from "lucide-react";
 
 const features = [
@@ -162,6 +165,129 @@ function FAQItem({ question, answer }: { question: string; answer: string }) {
 }
 
 export default function Home() {
+  const router = useRouter();
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  const dropZoneRef = useRef<HTMLDivElement>(null);
+  const [uploading, setUploading] = useState(false);
+  const [uploadProgress, setUploadProgress] = useState(0);
+  const [textQuery, setTextQuery] = useState("");
+  const [dragOver, setDragOver] = useState(false);
+
+  const handleFileUpload = useCallback(async (file: File) => {
+    const allowed = ["image/jpeg", "image/jpg", "image/png", "image/webp", "application/pdf"];
+    if (!allowed.includes(file.type)) {
+      alert("Please upload a JPG, PNG, WebP, or PDF file.");
+      return;
+    }
+    if (file.size > 5 * 1024 * 1024) {
+      alert("File too large. Maximum size is 5MB.");
+      return;
+    }
+
+    setUploading(true);
+    setUploadProgress(0);
+
+    // Simulate progress
+    const progressInterval = setInterval(() => {
+      setUploadProgress((prev) => {
+        if (prev >= 90) { clearInterval(progressInterval); return 90; }
+        return prev + Math.random() * 15;
+      });
+    }, 200);
+
+    // Store image preview
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      sessionStorage.setItem("mathImage", e.target?.result as string);
+    };
+    reader.readAsDataURL(file);
+
+    try {
+      const formData = new FormData();
+      formData.append("file", file);
+
+      const res = await fetch("/api/solve", { method: "POST", body: formData });
+      const data = await res.json();
+
+      clearInterval(progressInterval);
+      setUploadProgress(100);
+
+      if (data.error) {
+        alert(data.error);
+        setUploading(false);
+        return;
+      }
+
+      sessionStorage.setItem("mathSolution", data.solution);
+      sessionStorage.setItem("mathQuestion", "Solve this math problem");
+
+      setTimeout(() => router.push("/solve"), 300);
+    } catch {
+      clearInterval(progressInterval);
+      alert("Something went wrong. Please try again.");
+      setUploading(false);
+    }
+  }, [router]);
+
+  const handleTextSubmit = useCallback(async () => {
+    if (!textQuery.trim()) return;
+
+    setUploading(true);
+    setUploadProgress(0);
+
+    const progressInterval = setInterval(() => {
+      setUploadProgress((prev) => {
+        if (prev >= 90) { clearInterval(progressInterval); return 90; }
+        return prev + Math.random() * 15;
+      });
+    }, 200);
+
+    try {
+      const formData = new FormData();
+      formData.append("question", textQuery);
+
+      const res = await fetch("/api/solve", { method: "POST", body: formData });
+      const data = await res.json();
+
+      clearInterval(progressInterval);
+      setUploadProgress(100);
+
+      if (data.error) {
+        alert(data.error);
+        setUploading(false);
+        return;
+      }
+
+      sessionStorage.setItem("mathSolution", data.solution);
+      sessionStorage.setItem("mathQuestion", textQuery);
+      sessionStorage.removeItem("mathImage");
+
+      setTimeout(() => router.push("/solve"), 300);
+    } catch {
+      clearInterval(progressInterval);
+      alert("Something went wrong. Please try again.");
+      setUploading(false);
+    }
+  }, [textQuery, router]);
+
+  const handleDrop = useCallback((e: React.DragEvent) => {
+    e.preventDefault();
+    setDragOver(false);
+    const file = e.dataTransfer.files[0];
+    if (file) handleFileUpload(file);
+  }, [handleFileUpload]);
+
+  const handlePaste = useCallback((e: React.ClipboardEvent) => {
+    const items = e.clipboardData.items;
+    for (let i = 0; i < items.length; i++) {
+      if (items[i].type.startsWith("image/")) {
+        const file = items[i].getAsFile();
+        if (file) handleFileUpload(file);
+        break;
+      }
+    }
+  }, [handleFileUpload]);
+
   return (
     <>
       <Navbar />
@@ -179,13 +305,30 @@ export default function Home() {
             </p>
 
             {/* Chat Bar & Upload Area */}
-            <div className="mt-4 max-w-2xl mx-auto space-y-3">
+            <div className="mt-4 max-w-2xl mx-auto space-y-3" onPaste={handlePaste}>
+              {/* Hidden file input */}
+              <input
+                ref={fileInputRef}
+                type="file"
+                accept="image/jpeg,image/png,image/webp,application/pdf"
+                className="hidden"
+                onChange={(e) => {
+                  const file = e.target.files?.[0];
+                  if (file) handleFileUpload(file);
+                  e.target.value = "";
+                }}
+              />
+
               {/* Search-style Input Bar */}
               <div className="bg-white/70 backdrop-blur-sm rounded-full border border-border/80 shadow-lg px-5 py-2.5 flex items-center gap-3">
                 <input
                   type="text"
+                  value={textQuery}
+                  onChange={(e) => setTextQuery(e.target.value)}
+                  onKeyDown={(e) => { if (e.key === "Enter") handleTextSubmit(); }}
                   placeholder="Type or upload your question"
-                  className="flex-1 bg-transparent text-base text-foreground placeholder:text-muted/50 focus:outline-none"
+                  disabled={uploading}
+                  className="flex-1 bg-transparent text-base text-foreground placeholder:text-muted/50 focus:outline-none disabled:opacity-50"
                 />
                 <div className="flex items-center gap-1">
                   <a
@@ -198,36 +341,75 @@ export default function Home() {
                   </a>
                   <div className="w-px h-6 bg-border/60" />
                   <button
-                    className="w-10 h-10 rounded-full bg-foreground flex items-center justify-center text-white hover:bg-foreground/80 transition-colors"
+                    onClick={handleTextSubmit}
+                    disabled={uploading || !textQuery.trim()}
+                    className="w-10 h-10 rounded-full bg-foreground flex items-center justify-center text-white hover:bg-foreground/80 transition-colors disabled:opacity-40"
                     aria-label="Send"
                   >
-                    <SendHorizonal className="w-5 h-5" />
+                    {uploading ? (
+                      <Loader2 className="w-5 h-5 animate-spin" />
+                    ) : (
+                      <SendHorizonal className="w-5 h-5" />
+                    )}
                   </button>
                 </div>
               </div>
 
-              {/* Drop Zone */}
-              <div className="upload-area rounded-2xl py-6">
-                <div className="flex flex-col items-center gap-2">
-                  <div className="w-10 h-10 rounded-lg bg-primary/5 flex items-center justify-center">
-                    <Image className="w-5 h-5 text-muted/40" />
+              {/* Drop Zone / Uploading State */}
+              {uploading ? (
+                <div className="bg-white rounded-2xl border border-border p-6 shadow-sm">
+                  <div className="flex flex-col items-center gap-3">
+                    <div className="w-10 h-10 rounded-lg bg-primary/5 flex items-center justify-center">
+                      <Image className="w-5 h-5 text-muted/40" />
+                    </div>
+                    <p className="text-foreground text-sm font-semibold">Uploading</p>
+                    <div className="w-full max-w-xs">
+                      <div className="w-full bg-gray-100 rounded-full h-1.5">
+                        <div
+                          className="bg-red-400 h-1.5 rounded-full transition-all duration-300"
+                          style={{ width: `${Math.min(uploadProgress, 100)}%` }}
+                        />
+                      </div>
+                      <p className="text-xs text-muted mt-1 text-right">{Math.round(Math.min(uploadProgress, 100))}%</p>
+                    </div>
+                    <button
+                      onClick={() => { setUploading(false); setUploadProgress(0); }}
+                      className="text-xs text-muted hover:text-foreground border border-border px-4 py-1.5 rounded-lg transition-colors"
+                    >
+                      Cancel
+                    </button>
                   </div>
-                  <p className="text-muted text-sm">
-                    Drag Image or{" "}
-                    <span className="font-semibold text-foreground cursor-pointer hover:text-primary transition-colors">
-                      Click Here
-                    </span>{" "}
-                    to upload
-                  </p>
-                  <p className="text-muted/50 text-xs flex items-center gap-1.5">
-                    Command{" "}
-                    <kbd className="px-1.5 py-0.5 rounded bg-surface border border-border text-[10px] font-mono">&#8984;</kbd>
-                    {" "}+{" "}
-                    <kbd className="px-1.5 py-0.5 rounded bg-surface border border-border text-[10px] font-mono">V</kbd>
-                    {" "}to paste
-                  </p>
                 </div>
-              </div>
+              ) : (
+                <div
+                  ref={dropZoneRef}
+                  onClick={() => fileInputRef.current?.click()}
+                  onDrop={handleDrop}
+                  onDragOver={(e) => { e.preventDefault(); setDragOver(true); }}
+                  onDragLeave={() => setDragOver(false)}
+                  className={`upload-area rounded-2xl py-6 cursor-pointer ${dragOver ? "border-primary/60 bg-primary/5" : ""}`}
+                >
+                  <div className="flex flex-col items-center gap-2">
+                    <div className="w-10 h-10 rounded-lg bg-primary/5 flex items-center justify-center">
+                      <Image className="w-5 h-5 text-muted/40" />
+                    </div>
+                    <p className="text-muted text-sm">
+                      Drag Image or{" "}
+                      <span className="font-semibold text-foreground hover:text-primary transition-colors">
+                        Click Here
+                      </span>{" "}
+                      to upload
+                    </p>
+                    <p className="text-muted/50 text-xs flex items-center gap-1.5">
+                      Command{" "}
+                      <kbd className="px-1.5 py-0.5 rounded bg-surface border border-border text-[10px] font-mono">&#8984;</kbd>
+                      {" "}+{" "}
+                      <kbd className="px-1.5 py-0.5 rounded bg-surface border border-border text-[10px] font-mono">V</kbd>
+                      {" "}to paste
+                    </p>
+                  </div>
+                </div>
+              )}
             </div>
 
             {/* Stats */}
