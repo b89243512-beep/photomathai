@@ -241,7 +241,6 @@ export default function CalculatorPage() {
   const [activeTab, setActiveTab] = useState<TabName>("Basic");
   const [result, setResult] = useState<string | null>(null);
   const [steps, setSteps] = useState<Step[]>([]);
-  const [mode, setMode] = useState<"calculator" | "word">("calculator");
 
   const handleKeyPress = useCallback((key: string) => {
     const insert = mapKeyToInsert(key);
@@ -296,8 +295,8 @@ export default function CalculatorPage() {
                 Step-by-Step Solutions
               </span>
             </h1>
-            <p className="text-sm md:text-base text-gray-500 mt-2 max-w-xl mx-auto">
-              Instant, step-by-step solutions for any math expression. Algebra, trigonometry, calculus and more — completely free.
+            <p className="text-sm md:text-base text-gray-500 mt-2 max-w-2xl mx-auto leading-relaxed">
+              Instant, step-by-step solutions for any math expression you can think of. Whether you need to solve algebra equations, evaluate trigonometric functions, compute logarithms, or work through calculus problems — the Free Photo Math Calculator gives you detailed breakdowns of every step, completely free and with no sign-up required.
             </p>
           </div>
         </section>
@@ -305,30 +304,6 @@ export default function CalculatorPage() {
         {/* Calculator */}
         <section className="py-6 md:py-10">
           <div className="max-w-lg mx-auto px-4">
-            {/* Mode Tabs */}
-            <div className="flex items-center justify-center gap-3 mb-6">
-              <button
-                onClick={() => setMode("calculator")}
-                className={`px-5 py-2 rounded-full text-sm font-medium transition-all ${
-                  mode === "calculator"
-                    ? "bg-gray-100 text-gray-900 shadow-sm"
-                    : "text-gray-400 hover:text-gray-600"
-                }`}
-              >
-                🧮 Calculator
-              </button>
-              <button
-                onClick={() => setMode("word")}
-                className={`px-5 py-2 rounded-full text-sm font-medium transition-all ${
-                  mode === "word"
-                    ? "bg-gray-100 text-gray-900 shadow-sm"
-                    : "text-gray-400 hover:text-gray-600"
-                }`}
-              >
-                📝 Word Problem
-              </button>
-            </div>
-
             {/* Calculator Body */}
             <div className="bg-white rounded-2xl border border-gray-200 shadow-lg overflow-hidden">
               {/* Input Area */}
@@ -344,11 +319,7 @@ export default function CalculatorPage() {
                         setSteps([]);
                       }}
                       onKeyDown={handleKeyDown}
-                      placeholder={
-                        mode === "calculator"
-                          ? "ax² + bx + c = 0"
-                          : "Type your word problem here..."
-                      }
+                      placeholder="ax² + bx + c = 0"
                       className="w-full text-lg font-mono text-gray-900 placeholder:text-gray-300 bg-transparent focus:outline-none py-2"
                     />
                   </div>

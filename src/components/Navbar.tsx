@@ -10,9 +10,9 @@ import {
 } from "lucide-react";
 
 const navLinks = [
+  { href: "/calculator", label: "Calculator" },
   { href: "#features", label: "Features" },
   { href: "#how-it-works", label: "How It Works" },
-  { href: "/calculator", label: "Calculator" },
   { href: "#faq", label: "FAQ" },
 ] as const;
 

@@ -188,13 +188,14 @@ export default function Home() {
                   className="flex-1 bg-transparent text-base text-foreground placeholder:text-muted/50 focus:outline-none"
                 />
                 <div className="flex items-center gap-1">
-                  <button
+                  <a
+                    href="/calculator"
                     className="w-10 h-10 rounded-full flex items-center justify-center text-muted/60 hover:text-primary hover:bg-primary/5 transition-colors"
-                    aria-label="Math keyboard"
-                    title="Math keyboard"
+                    aria-label="Math calculator"
+                    title="Open Calculator"
                   >
                     <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="M6 8h.01M10 8h.01M14 8h.01M18 8h.01M6 12h.01M10 12h.01M14 12h.01M18 12h.01M6 16h12"/></svg>
-                  </button>
+                  </a>
                   <div className="w-px h-6 bg-border/60" />
                   <button
                     className="w-10 h-10 rounded-full bg-foreground flex items-center justify-center text-white hover:bg-foreground/80 transition-colors"
