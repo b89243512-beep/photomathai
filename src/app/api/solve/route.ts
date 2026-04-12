@@ -1,5 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { GoogleGenerativeAI } from "@google/generative-ai";
+import { auth } from "@/auth";
+import { getTodayUsage, logUsage, DAILY_LIMITS, supabaseAdmin } from "@/lib/supabase";
 
 /* ------------------------------------------------------------------ */
 /*  Rate limiting (in-memory, per IP)                                  */
@@ -125,9 +127,45 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: "Forbidden." }, { status: 403 });
     }
 
-    // Rate limiting
-    const ip = getClientIp(request);
-    if (!checkRateLimit(ip)) {
+    // Auth check
+    const session = await auth();
+    if (!session?.user?.id) {
+      return NextResponse.json({ error: "Please sign in to continue." }, { status: 401 });
+    }
+
+    // Fetch DB user to check plan and daily usage
+    const { data: dbUser } = await supabaseAdmin
+      .from("users")
+      .select("*")
+      .eq("id", session.user.id)
+      .single();
+
+    if (!dbUser) {
+      return NextResponse.json({ error: "User not found. Please sign in again." }, { status: 401 });
+    }
+
+    const plan = (dbUser.plan || "free") as keyof typeof DAILY_LIMITS;
+
+    // Pro only — free tier disabled
+    if (plan !== "pro") {
+      return NextResponse.json(
+        { error: "Upgrade to Pro to solve math problems.", requiresUpgrade: true },
+        { status: 402 }
+      );
+    }
+
+    const dailyLimit = DAILY_LIMITS[plan];
+    const todayCount = await getTodayUsage(dbUser.id, "solve");
+
+    if (todayCount >= dailyLimit) {
+      return NextResponse.json(
+        { error: `Daily limit reached (${dailyLimit} problems). Please try again tomorrow.` },
+        { status: 429 }
+      );
+    }
+
+    // Rate limiting (per user, short window)
+    if (!checkRateLimit(session.user.id)) {
       return NextResponse.json(
         { error: "Too many requests. Please try again later." },
         { status: 429 }
@@ -202,7 +240,13 @@ export async function POST(request: NextRequest) {
     const result = await model.generateContent(parts);
     const text = result.response.text();
 
-    return NextResponse.json({ solution: text });
+    // Log usage (fire and forget)
+    logUsage(session.user.id, "solve").catch(() => {});
+
+    return NextResponse.json({
+      solution: text,
+      usage: { today: todayCount + 1, limit: dailyLimit, plan },
+    });
   } catch (error) {
     console.error("API error:", error);
     return NextResponse.json(
@@ -223,9 +267,14 @@ export async function PUT(request: NextRequest) {
       return NextResponse.json({ error: "Forbidden." }, { status: 403 });
     }
 
-    // Rate limiting
-    const ip = getClientIp(request);
-    if (!checkRateLimit(ip)) {
+    // Auth check
+    const session = await auth();
+    if (!session?.user?.id) {
+      return NextResponse.json({ error: "Please sign in to continue." }, { status: 401 });
+    }
+
+    // Rate limiting (per user)
+    if (!checkRateLimit(session.user.id)) {
       return NextResponse.json(
         { error: "Too many requests. Please try again later." },
         { status: 429 }

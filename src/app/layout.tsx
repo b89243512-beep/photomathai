@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import { GoogleAnalytics } from "@next/third-parties/google";
+import { SessionProvider } from "@/components/SessionProvider";
 import "./globals.css";
 
 const inter = Inter({
@@ -12,11 +13,11 @@ const inter = Inter({
 export const metadata: Metadata = {
   metadataBase: new URL("https://photomathai.com"),
   title: {
-    default: "Free PhotoMath AI - Solve Any Math Problem from a Photo Instantly",
+    default: "Free PhotoMath AI Online - Solve Any Math Problem from a Photo Instantly",
     template: "%s | Free PhotoMath AI",
   },
   description:
-    "Free PhotoMath AI solves math problems from photos instantly with step-by-step solutions. Upload a photo of any algebra, calculus, geometry or statistics problem and get detailed explanations for free.",
+    "Free PhotoMath AI Online solves math problems from photos instantly with step-by-step solutions. Upload a photo of any algebra, calculus, geometry or statistics problem and get detailed explanations for free.",
   keywords: [
     "free photomath ai",
     "photo math solver",
@@ -34,7 +35,7 @@ export const metadata: Metadata = {
     "math photo scanner",
   ],
   openGraph: {
-    title: "Free PhotoMath AI - Solve Any Math Problem from a Photo",
+    title: "Free PhotoMath AI Online - Solve Any Math Problem from a Photo",
     description:
       "Upload a photo of any math problem and get instant step-by-step solutions powered by AI. Completely free, no sign-up required.",
     type: "website",
@@ -43,7 +44,7 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "Free PhotoMath AI - Solve Any Math Problem from a Photo",
+    title: "Free PhotoMath AI Online - Solve Any Math Problem from a Photo",
     description:
       "Upload a photo of any math problem and get instant step-by-step solutions powered by AI. Completely free, no sign-up required.",
   },
@@ -142,7 +143,7 @@ export default function RootLayout({
             }),
           }}
         />
-        {children}
+        <SessionProvider>{children}</SessionProvider>
       </body>
       <GoogleAnalytics gaId="G-0EM8F8J07P" />
     </html>
