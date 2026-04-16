@@ -14,10 +14,20 @@ export const metadata: Metadata = {
     "math solver with steps",
     "online math calculator",
   ],
+  alternates: {
+    canonical: "https://photomathai.com/calculator",
+  },
   openGraph: {
     title: "Free Photo Math Calculator - Step-by-Step Math Solver",
     description:
       "Solve any math expression instantly with step-by-step solutions. Algebra, trigonometry, logarithms and more — completely free.",
+    url: "https://photomathai.com/calculator",
+    type: "website",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Free Photo Math Calculator - Step-by-Step Math Solver",
+    description: "Solve any math expression instantly with step-by-step solutions.",
   },
 };
 

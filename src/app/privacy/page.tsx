@@ -6,6 +6,8 @@ export const metadata: Metadata = {
   title: "Privacy Policy - Free PhotoMath AI",
   description:
     "Privacy Policy for Free PhotoMath AI. Learn how we handle your data when you use our free AI math problem solver.",
+  alternates: { canonical: "https://photomathai.com/privacy" },
+  robots: { index: true, follow: true },
 };
 
 export default function PrivacyPage() {

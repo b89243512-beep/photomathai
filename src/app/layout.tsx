@@ -12,11 +12,11 @@ const inter = Inter({
 export const metadata: Metadata = {
   metadataBase: new URL("https://photomathai.com"),
   title: {
-    default: "Free PhotoMath AI - Solve Any Math Problem from a Photo Instantly",
+    default: "Free PhotoMath AI Online - Solve Any Math Problem from a Photo Instantly",
     template: "%s | Free PhotoMath AI",
   },
   description:
-    "Free PhotoMath AI solves math problems from photos instantly with step-by-step solutions. Upload a photo of any algebra, calculus, geometry or statistics problem and get detailed explanations for free.",
+    "Free PhotoMath AI Online solves math problems from photos instantly with step-by-step solutions. Upload a photo of any algebra, calculus, geometry or statistics problem and get detailed explanations for free.",
   keywords: [
     "free photomath ai",
     "photo math solver",
@@ -34,7 +34,7 @@ export const metadata: Metadata = {
     "math photo scanner",
   ],
   openGraph: {
-    title: "Free PhotoMath AI - Solve Any Math Problem from a Photo",
+    title: "Free PhotoMath AI Online - Solve Any Math Problem from a Photo",
     description:
       "Upload a photo of any math problem and get instant step-by-step solutions powered by AI. Completely free, no sign-up required.",
     type: "website",
@@ -43,7 +43,7 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "Free PhotoMath AI - Solve Any Math Problem from a Photo",
+    title: "Free PhotoMath AI Online - Solve Any Math Problem from a Photo",
     description:
       "Upload a photo of any math problem and get instant step-by-step solutions powered by AI. Completely free, no sign-up required.",
   },
@@ -55,8 +55,12 @@ export const metadata: Metadata = {
     canonical: "https://photomathai.com",
   },
   icons: {
-    icon: "/logo.svg",
-    apple: "/logo.svg",
+    icon: [
+      { url: "/icon.svg", type: "image/svg+xml" },
+      { url: "/logo.svg", type: "image/svg+xml" },
+    ],
+    shortcut: "/icon.svg",
+    apple: "/apple-icon.svg",
   },
   verification: {
     google: "8rh_cBIlxp37XQQjMzvem6y8pivxlaqyK4TUFLamiAM",

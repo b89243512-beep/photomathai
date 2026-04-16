@@ -11,8 +11,8 @@ import {
 
 const navLinks = [
   { href: "/calculator", label: "Calculator" },
+  { href: "/math-games", label: "Math Games" },
   { href: "#features", label: "Features" },
-  { href: "#how-it-works", label: "How It Works" },
   { href: "#faq", label: "FAQ" },
 ] as const;
 

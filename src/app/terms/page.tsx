@@ -6,6 +6,8 @@ export const metadata: Metadata = {
   title: "Terms of Service - Free PhotoMath AI",
   description:
     "Terms of Service for Free PhotoMath AI. Read about the rules and guidelines for using our free AI-powered math problem solver.",
+  alternates: { canonical: "https://photomathai.com/terms" },
+  robots: { index: true, follow: true },
 };
 
 export default function TermsPage() {
