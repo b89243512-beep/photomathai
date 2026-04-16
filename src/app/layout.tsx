@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import { GoogleAnalytics } from "@next/third-parties/google";
+import { SessionProvider } from "@/components/SessionProvider";
 import "./globals.css";
 
 const inter = Inter({
@@ -146,7 +147,7 @@ export default function RootLayout({
             }),
           }}
         />
-        {children}
+        <SessionProvider>{children}</SessionProvider>
       </body>
       <GoogleAnalytics gaId="G-0EM8F8J07P" />
     </html>

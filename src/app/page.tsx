@@ -1,9 +1,12 @@
 "use client";
 
-import { useState, useRef, useCallback } from "react";
+import { useState, useRef, useCallback, useEffect } from "react";
 import { useRouter } from "next/navigation";
+import { useSession } from "next-auth/react";
 import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
+import { LoginModal } from "@/components/LoginModal";
+import { PricingModal } from "@/components/PricingModal";
 import {
   Camera,
   Upload,
@@ -166,12 +169,108 @@ function FAQItem({ question, answer }: { question: string; answer: string }) {
 
 export default function Home() {
   const router = useRouter();
+  const { status, data: session } = useSession();
+  const [showPricing, setShowPricing] = useState(false);
+
+  // Show pricing modal once per session after login
+  useEffect(() => {
+    if (status === "authenticated") {
+      const shown = sessionStorage.getItem("pricingShown");
+      if (!shown) {
+        const timer = setTimeout(() => {
+          setShowPricing(true);
+          sessionStorage.setItem("pricingShown", "1");
+        }, 800);
+        return () => clearTimeout(timer);
+      }
+    }
+  }, [status]);
+
+  // Listen for "open-pricing" event from Navbar upgrade button
+  useEffect(() => {
+    const handler = () => setShowPricing(true);
+    window.addEventListener("open-pricing", handler);
+    return () => window.removeEventListener("open-pricing", handler);
+  }, []);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const dropZoneRef = useRef<HTMLDivElement>(null);
+  const handleFileUploadRef = useRef<((file: File) => void) | null>(null);
+  const handleTextSubmitRef = useRef<((overrideText?: string) => void) | null>(null);
   const [uploading, setUploading] = useState(false);
   const [uploadProgress, setUploadProgress] = useState(0);
   const [textQuery, setTextQuery] = useState("");
   const [dragOver, setDragOver] = useState(false);
+  const [showLogin, setShowLogin] = useState(false);
+  const [pendingAction, setPendingAction] = useState<(() => void) | null>(null);
+
+  // Save a pending action to sessionStorage so it survives OAuth redirect
+  const savePendingToStorage = useCallback((payload: { type: "text"; text: string } | { type: "file"; base64: string; name: string; mime: string }) => {
+    try {
+      sessionStorage.setItem("pendingAction", JSON.stringify(payload));
+    } catch {}
+  }, []);
+
+  // When login completes in-session (modal was open), run pending action
+  useEffect(() => {
+    if (status === "authenticated" && pendingAction) {
+      pendingAction();
+      setPendingAction(null);
+      setShowLogin(false);
+    }
+  }, [status, pendingAction]);
+
+  // On mount after OAuth redirect: restore pending action from sessionStorage
+  useEffect(() => {
+    if (status !== "authenticated") return;
+    const stored = sessionStorage.getItem("pendingAction");
+    if (!stored) return;
+    sessionStorage.removeItem("pendingAction");
+
+    try {
+      const payload = JSON.parse(stored);
+      if (payload.type === "text") {
+        setTextQuery(payload.text);
+        setTimeout(() => handleTextSubmitRef.current?.(payload.text), 100);
+      } else if (payload.type === "file") {
+        // Restore file from base64
+        fetch(payload.base64)
+          .then((r) => r.blob())
+          .then((blob) => {
+            const file = new File([blob], payload.name, { type: payload.mime });
+            setTimeout(() => handleFileUploadRef.current?.(file), 100);
+          })
+          .catch(() => {});
+      }
+    } catch {}
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [status]);
+
+  const requireAuth = useCallback(async (action: () => void, payload?: { type: "text"; text: string } | { type: "file"; file: File }) => {
+    if (status === "authenticated") {
+      action();
+      return;
+    }
+    // Save payload to sessionStorage for after OAuth redirect
+    if (payload) {
+      if (payload.type === "text") {
+        savePendingToStorage({ type: "text", text: payload.text });
+      } else if (payload.type === "file") {
+        // Convert file to base64 for sessionStorage
+        const reader = new FileReader();
+        reader.onload = (e) => {
+          savePendingToStorage({
+            type: "file",
+            base64: e.target?.result as string,
+            name: payload.file.name,
+            mime: payload.file.type,
+          });
+        };
+        reader.readAsDataURL(payload.file);
+      }
+    }
+    setPendingAction(() => action);
+    setShowLogin(true);
+  }, [status, savePendingToStorage]);
 
   const handleFileUpload = useCallback(async (file: File) => {
     const allowed = ["image/jpeg", "image/jpg", "image/png", "image/webp", "application/pdf"];
@@ -213,7 +312,11 @@ export default function Home() {
       setUploadProgress(100);
 
       if (data.error) {
-        alert(data.error);
+        if (data.requiresUpgrade) {
+          setShowPricing(true);
+        } else {
+          alert(data.error);
+        }
         setUploading(false);
         return;
       }
@@ -229,8 +332,9 @@ export default function Home() {
     }
   }, [router]);
 
-  const handleTextSubmit = useCallback(async () => {
-    if (!textQuery.trim()) return;
+  const handleTextSubmit = useCallback(async (overrideText?: string) => {
+    const q = (overrideText ?? textQuery).trim();
+    if (!q) return;
 
     setUploading(true);
     setUploadProgress(0);
@@ -244,7 +348,7 @@ export default function Home() {
 
     try {
       const formData = new FormData();
-      formData.append("question", textQuery);
+      formData.append("question", q);
 
       const res = await fetch("/api/solve", { method: "POST", body: formData });
       const data = await res.json();
@@ -253,13 +357,17 @@ export default function Home() {
       setUploadProgress(100);
 
       if (data.error) {
-        alert(data.error);
+        if (data.requiresUpgrade) {
+          setShowPricing(true);
+        } else {
+          alert(data.error);
+        }
         setUploading(false);
         return;
       }
 
       sessionStorage.setItem("mathSolution", data.solution);
-      sessionStorage.setItem("mathQuestion", textQuery);
+      sessionStorage.setItem("mathQuestion", q);
       sessionStorage.removeItem("mathImage");
 
       setTimeout(() => router.push("/solve"), 300);
@@ -270,26 +378,34 @@ export default function Home() {
     }
   }, [textQuery, router]);
 
+  // Keep refs up to date so sessionStorage restore can call them
+  useEffect(() => {
+    handleFileUploadRef.current = handleFileUpload;
+    handleTextSubmitRef.current = handleTextSubmit;
+  }, [handleFileUpload, handleTextSubmit]);
+
   const handleDrop = useCallback((e: React.DragEvent) => {
     e.preventDefault();
     setDragOver(false);
     const file = e.dataTransfer.files[0];
-    if (file) handleFileUpload(file);
-  }, [handleFileUpload]);
+    if (file) requireAuth(() => handleFileUpload(file), { type: "file", file });
+  }, [handleFileUpload, requireAuth]);
 
   const handlePaste = useCallback((e: React.ClipboardEvent) => {
     const items = e.clipboardData.items;
     for (let i = 0; i < items.length; i++) {
       if (items[i].type.startsWith("image/")) {
         const file = items[i].getAsFile();
-        if (file) handleFileUpload(file);
+        if (file) requireAuth(() => handleFileUpload(file), { type: "file", file });
         break;
       }
     }
-  }, [handleFileUpload]);
+  }, [handleFileUpload, requireAuth]);
 
   return (
     <>
+      <LoginModal open={showLogin} onClose={() => { setShowLogin(false); setPendingAction(null); }} />
+      <PricingModal open={showPricing} onClose={() => setShowPricing(false)} userName={session?.user?.name} />
       <Navbar />
 
       <main>
@@ -314,7 +430,7 @@ export default function Home() {
                 className="hidden"
                 onChange={(e) => {
                   const file = e.target.files?.[0];
-                  if (file) handleFileUpload(file);
+                  if (file) requireAuth(() => handleFileUpload(file), { type: "file", file });
                   e.target.value = "";
                 }}
               />
@@ -325,7 +441,7 @@ export default function Home() {
                   type="text"
                   value={textQuery}
                   onChange={(e) => setTextQuery(e.target.value)}
-                  onKeyDown={(e) => { if (e.key === "Enter") handleTextSubmit(); }}
+                  onKeyDown={(e) => { if (e.key === "Enter") requireAuth(() => handleTextSubmit(), { type: "text", text: textQuery }); }}
                   placeholder="Type or upload your question"
                   disabled={uploading}
                   className="flex-1 bg-transparent text-base text-foreground placeholder:text-muted/50 focus:outline-none disabled:opacity-50"
@@ -341,7 +457,7 @@ export default function Home() {
                   </a>
                   <div className="w-px h-6 bg-border/60" />
                   <button
-                    onClick={handleTextSubmit}
+                    onClick={() => requireAuth(() => handleTextSubmit(), { type: "text", text: textQuery })}
                     disabled={uploading || !textQuery.trim()}
                     className="w-10 h-10 rounded-full bg-foreground flex items-center justify-center text-white hover:bg-foreground/80 transition-colors disabled:opacity-40"
                     aria-label="Send"
