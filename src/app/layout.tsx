@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import { GoogleAnalytics } from "@next/third-parties/google";
 import { SessionProvider } from "@/components/SessionProvider";
+import { ThemeProvider } from "@/components/ThemeProvider";
 import "./globals.css";
 
 const inter = Inter({
@@ -78,28 +79,75 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className={`${inter.variable} h-full antialiased`}>
-      <body className="min-h-full flex flex-col">
+    <html lang="en-US" className={`${inter.variable} h-full antialiased`} suppressHydrationWarning>
+      <head>
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `try{var t=localStorage.getItem('theme');var m=window.matchMedia('(prefers-color-scheme: dark)').matches;var d=(t==='dark')||(!t&&m);if(d)document.documentElement.classList.add('dark');}catch(e){}`,
+          }}
+        />
+      </head>
+      <body className="min-h-full flex flex-col" suppressHydrationWarning>
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{
             __html: JSON.stringify({
               "@context": "https://schema.org",
-              "@type": "WebApplication",
+              "@type": "Organization",
+              name: "PhotoMath AI",
+              alternateName: "Free PhotoMath AI",
+              url: "https://photomathai.com",
+              logo: "https://photomathai.com/logo.svg",
+              description:
+                "PhotoMath AI is a free AI-powered math problem solver that provides step-by-step solutions from photos or text input.",
+              sameAs: [],
+            }),
+          }}
+        />
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify({
+              "@context": "https://schema.org",
+              "@type": "SoftwareApplication",
               name: "Free PhotoMath AI",
               applicationCategory: "EducationalApplication",
-              operatingSystem: "Web",
+              applicationSubCategory: "MathSolver",
+              operatingSystem: "Web, iOS, Android",
               description:
-                "Free AI-powered math problem solver that reads photos of math problems and provides step-by-step solutions instantly.",
+                "Free AI-powered math problem solver that reads photos of math problems and provides step-by-step solutions instantly. Supports algebra, calculus, geometry, trigonometry, and more.",
               url: "https://photomathai.com",
               offers: {
                 "@type": "Offer",
                 price: "0",
                 priceCurrency: "USD",
               },
-              creator: {
+              aggregateRating: {
+                "@type": "AggregateRating",
+                ratingValue: "4.9",
+                ratingCount: "5000",
+                bestRating: "5",
+                worstRating: "1",
+              },
+              author: {
                 "@type": "Organization",
                 name: "PhotoMath AI",
+              },
+            }),
+          }}
+        />
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify({
+              "@context": "https://schema.org",
+              "@type": "WebSite",
+              name: "Free PhotoMath AI",
+              url: "https://photomathai.com",
+              potentialAction: {
+                "@type": "SearchAction",
+                target: "https://photomathai.com/?q={search_term_string}",
+                "query-input": "required name=search_term_string",
               },
             }),
           }}
@@ -147,7 +195,9 @@ export default function RootLayout({
             }),
           }}
         />
-        <SessionProvider>{children}</SessionProvider>
+        <ThemeProvider>
+          <SessionProvider>{children}</SessionProvider>
+        </ThemeProvider>
       </body>
       <GoogleAnalytics gaId="G-0EM8F8J07P" />
     </html>

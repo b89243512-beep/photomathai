@@ -2,6 +2,8 @@
 
 import { useState, useEffect, useRef } from "react";
 import { Navbar } from "@/components/Navbar";
+import { PricingModal } from "@/components/PricingModal";
+import { useSession } from "next-auth/react";
 import {
   SendHorizonal,
   Loader2,
@@ -101,12 +103,14 @@ function MarkdownContent({ content }: { content: string }) {
 }
 
 export default function SolvePage() {
+  const { data: session } = useSession();
   const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState("");
   const [loading, setLoading] = useState(false);
   const [initialLoading, setInitialLoading] = useState(true);
   const [copiedIdx, setCopiedIdx] = useState<number | null>(null);
   const [showScrollBtn, setShowScrollBtn] = useState(false);
+  const [showPricing, setShowPricing] = useState(false);
   const chatContainerRef = useRef<HTMLDivElement>(null);
   const chatEndRef = useRef<HTMLDivElement>(null);
   const lastMsgRef = useRef<HTMLDivElement>(null);
@@ -177,10 +181,16 @@ export default function SolvePage() {
         body: JSON.stringify({ question: msg, context: lastAssistant?.content || "" }),
       });
       const data = await res.json();
-      setMessages((prev) => [
-        ...prev,
-        { role: "assistant", content: data.error ? `Error: ${data.error}` : data.solution },
-      ]);
+
+      if (data.requiresUpgrade) {
+        setShowPricing(true);
+        setMessages((prev) => prev.slice(0, -1)); // remove the user's just-added question
+      } else {
+        setMessages((prev) => [
+          ...prev,
+          { role: "assistant", content: data.error ? `Error: ${data.error}` : data.solution },
+        ]);
+      }
     } catch {
       setMessages((prev) => [
         ...prev,
@@ -207,11 +217,16 @@ export default function SolvePage() {
         formData.append("file", file);
         const res = await fetch("/api/solve", { method: "POST", body: formData });
         const data = await res.json();
-        if (data.solution) sessionStorage.setItem("mathSolution", data.solution);
-        setMessages((prev) => [
-          ...prev,
-          { role: "assistant", content: data.error ? `Error: ${data.error}` : data.solution },
-        ]);
+        if (data.requiresUpgrade) {
+          setShowPricing(true);
+          setMessages((prev) => prev.slice(0, -1));
+        } else {
+          if (data.solution) sessionStorage.setItem("mathSolution", data.solution);
+          setMessages((prev) => [
+            ...prev,
+            { role: "assistant", content: data.error ? `Error: ${data.error}` : data.solution },
+          ]);
+        }
       } catch {
         setMessages((prev) => [
           ...prev,
@@ -253,6 +268,7 @@ export default function SolvePage() {
 
   return (
     <div className="h-screen flex flex-col overflow-hidden">
+      <PricingModal open={showPricing} onClose={() => setShowPricing(false)} userName={session?.user?.name} />
       <Navbar />
 
       {/* Scrollable chat area */}

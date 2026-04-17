@@ -94,6 +94,23 @@ export async function logUsage(userId: string, action: string = "solve"): Promis
   if (error) console.error("logUsage error:", error);
 }
 
+/** Count total all-time usage for a user (for free-trial check) */
+export async function getTotalUsage(userId: string, action: string = "solve"): Promise<number> {
+  const { count, error } = await supabaseAdmin
+    .from("usage_log")
+    .select("*", { count: "exact", head: true })
+    .eq("user_id", userId)
+    .eq("action", action);
+  if (error) {
+    console.error("getTotalUsage error:", error);
+    return 0;
+  }
+  return count ?? 0;
+}
+
+/** Free users get 1 free solve before paywall */
+export const FREE_TRIAL_SOLVES = 1;
+
 /** Save a solution to history */
 export async function saveSolution(params: {
   userId: string;

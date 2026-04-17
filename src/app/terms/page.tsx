@@ -10,9 +10,19 @@ export const metadata: Metadata = {
   robots: { index: true, follow: true },
 };
 
+const breadcrumbSchema = {
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  itemListElement: [
+    { "@type": "ListItem", position: 1, name: "Home", item: "https://photomathai.com" },
+    { "@type": "ListItem", position: 2, name: "Terms of Service", item: "https://photomathai.com/terms" },
+  ],
+};
+
 export default function TermsPage() {
   return (
     <>
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema) }} />
       <Navbar />
       <main className="max-w-3xl mx-auto px-4 py-16">
         <h1 className="text-3xl font-bold text-foreground mb-8">Terms of Service</h1>

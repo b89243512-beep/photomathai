@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { GoogleGenerativeAI } from "@google/generative-ai";
 import { auth } from "@/auth";
-import { getTodayUsage, logUsage, DAILY_LIMITS, supabaseAdmin } from "@/lib/supabase";
+import { getTodayUsage, getTotalUsage, logUsage, DAILY_LIMITS, FREE_TRIAL_SOLVES, supabaseAdmin, upsertUser } from "@/lib/supabase";
 
 /* ------------------------------------------------------------------ */
 /*  Rate limiting (in-memory, per IP)                                  */
@@ -133,35 +133,64 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: "Please sign in to continue." }, { status: 401 });
     }
 
-    // Fetch DB user to check plan and daily usage
-    const { data: dbUser } = await supabaseAdmin
-      .from("users")
-      .select("*")
-      .eq("id", session.user.id)
-      .single();
+    // Fetch DB user — try email first (most reliable), fall back to id
+    let dbUser = null;
+    if (session.user.email) {
+      const { data } = await supabaseAdmin
+        .from("users")
+        .select("*")
+        .eq("email", session.user.email)
+        .maybeSingle();
+      dbUser = data;
+    }
+    if (!dbUser && session.user.id) {
+      const { data } = await supabaseAdmin
+        .from("users")
+        .select("*")
+        .eq("google_id", session.user.id)
+        .maybeSingle();
+      dbUser = data;
+    }
+
+    // JIT upsert — create user if not in DB
+    if (!dbUser && session.user.email) {
+      const created = await upsertUser({
+        googleId: session.user.id,
+        email: session.user.email,
+        name: session.user.name ?? null,
+        image: session.user.image ?? null,
+      });
+      if (created) dbUser = created;
+    }
 
     if (!dbUser) {
-      return NextResponse.json({ error: "User not found. Please sign in again." }, { status: 401 });
+      return NextResponse.json({ error: "Account setup failed. Please try signing out and back in." }, { status: 401 });
     }
 
     const plan = (dbUser.plan || "free") as keyof typeof DAILY_LIMITS;
 
-    // Pro only — free tier disabled
+    // Free users get FREE_TRIAL_SOLVES total solves, then paywall
     if (plan !== "pro") {
-      return NextResponse.json(
-        { error: "Upgrade to Pro to solve math problems.", requiresUpgrade: true },
-        { status: 402 }
-      );
-    }
-
-    const dailyLimit = DAILY_LIMITS[plan];
-    const todayCount = await getTodayUsage(dbUser.id, "solve");
-
-    if (todayCount >= dailyLimit) {
-      return NextResponse.json(
-        { error: `Daily limit reached (${dailyLimit} problems). Please try again tomorrow.` },
-        { status: 429 }
-      );
+      const totalUsed = await getTotalUsage(dbUser.id, "solve");
+      if (totalUsed >= FREE_TRIAL_SOLVES) {
+        return NextResponse.json(
+          {
+            error: "You've used your free solve. Upgrade to Pro for unlimited access.",
+            requiresUpgrade: true,
+          },
+          { status: 402 }
+        );
+      }
+    } else {
+      // Pro users — daily limit
+      const dailyLimit = DAILY_LIMITS[plan];
+      const todayCount = await getTodayUsage(dbUser.id, "solve");
+      if (todayCount >= dailyLimit) {
+        return NextResponse.json(
+          { error: `Daily limit reached (${dailyLimit} problems). Please try again tomorrow.` },
+          { status: 429 }
+        );
+      }
     }
 
     // Rate limiting (per user, short window)
@@ -240,13 +269,10 @@ export async function POST(request: NextRequest) {
     const result = await model.generateContent(parts);
     const text = result.response.text();
 
-    // Log usage (fire and forget)
-    logUsage(session.user.id, "solve").catch(() => {});
+    // Log usage (fire and forget) — DB id, not session user.id (same in most cases)
+    logUsage(dbUser.id, "solve").catch(() => {});
 
-    return NextResponse.json({
-      solution: text,
-      usage: { today: todayCount + 1, limit: dailyLimit, plan },
-    });
+    return NextResponse.json({ solution: text, plan });
   } catch (error) {
     console.error("API error:", error);
     return NextResponse.json(
@@ -278,6 +304,24 @@ export async function PUT(request: NextRequest) {
       return NextResponse.json(
         { error: "Too many requests. Please try again later." },
         { status: 429 }
+      );
+    }
+
+    // Fetch DB user — follow-ups require Pro plan
+    let dbUser = null;
+    if (session.user.email) {
+      const { data } = await supabaseAdmin
+        .from("users").select("*").eq("email", session.user.email).maybeSingle();
+      dbUser = data;
+    }
+    if (!dbUser) {
+      return NextResponse.json({ error: "Account setup failed. Please sign out and back in." }, { status: 401 });
+    }
+
+    if (dbUser.plan !== "pro") {
+      return NextResponse.json(
+        { error: "Upgrade to Pro for follow-up questions.", requiresUpgrade: true },
+        { status: 402 }
       );
     }
 

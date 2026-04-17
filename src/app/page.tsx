@@ -198,9 +198,11 @@ export default function Home() {
   const handleTextSubmitRef = useRef<((overrideText?: string) => void) | null>(null);
   const [uploading, setUploading] = useState(false);
   const [uploadProgress, setUploadProgress] = useState(0);
+  const [loadingStage, setLoadingStage] = useState<"reading" | "analyzing" | "solving" | "done">("reading");
   const [textQuery, setTextQuery] = useState("");
   const [dragOver, setDragOver] = useState(false);
   const [showLogin, setShowLogin] = useState(false);
+  const [errorMsg, setErrorMsg] = useState<string | null>(null);
   const [pendingAction, setPendingAction] = useState<(() => void) | null>(null);
 
   // Save a pending action to sessionStorage so it survives OAuth redirect
@@ -275,16 +277,23 @@ export default function Home() {
   const handleFileUpload = useCallback(async (file: File) => {
     const allowed = ["image/jpeg", "image/jpg", "image/png", "image/webp", "application/pdf"];
     if (!allowed.includes(file.type)) {
-      alert("Please upload a JPG, PNG, WebP, or PDF file.");
+      setErrorMsg("Please upload a JPG, PNG, WebP, or PDF file.");
       return;
     }
     if (file.size > 5 * 1024 * 1024) {
-      alert("File too large. Maximum size is 5MB.");
+      setErrorMsg("File too large. Maximum size is 5MB.");
       return;
     }
 
     setUploading(true);
     setUploadProgress(0);
+    setLoadingStage("reading");
+    setErrorMsg(null);
+
+    // Staged loading UX
+    const stageTimers: ReturnType<typeof setTimeout>[] = [];
+    stageTimers.push(setTimeout(() => setLoadingStage("analyzing"), 1200));
+    stageTimers.push(setTimeout(() => setLoadingStage("solving"), 3000));
 
     // Simulate progress
     const progressInterval = setInterval(() => {
@@ -309,13 +318,15 @@ export default function Home() {
       const data = await res.json();
 
       clearInterval(progressInterval);
+      stageTimers.forEach(clearTimeout);
       setUploadProgress(100);
+      setLoadingStage("done");
 
       if (data.error) {
         if (data.requiresUpgrade) {
           setShowPricing(true);
         } else {
-          alert(data.error);
+          setErrorMsg(data.error);
         }
         setUploading(false);
         return;
@@ -327,7 +338,8 @@ export default function Home() {
       setTimeout(() => router.push("/solve"), 300);
     } catch {
       clearInterval(progressInterval);
-      alert("Something went wrong. Please try again.");
+      stageTimers.forEach(clearTimeout);
+      setErrorMsg("Something went wrong. Please try again.");
       setUploading(false);
     }
   }, [router]);
@@ -338,6 +350,12 @@ export default function Home() {
 
     setUploading(true);
     setUploadProgress(0);
+    setLoadingStage("reading");
+    setErrorMsg(null);
+
+    const stageTimers: ReturnType<typeof setTimeout>[] = [];
+    stageTimers.push(setTimeout(() => setLoadingStage("analyzing"), 1000));
+    stageTimers.push(setTimeout(() => setLoadingStage("solving"), 2500));
 
     const progressInterval = setInterval(() => {
       setUploadProgress((prev) => {
@@ -354,13 +372,15 @@ export default function Home() {
       const data = await res.json();
 
       clearInterval(progressInterval);
+      stageTimers.forEach(clearTimeout);
       setUploadProgress(100);
+      setLoadingStage("done");
 
       if (data.error) {
         if (data.requiresUpgrade) {
           setShowPricing(true);
         } else {
-          alert(data.error);
+          setErrorMsg(data.error);
         }
         setUploading(false);
         return;
@@ -373,7 +393,8 @@ export default function Home() {
       setTimeout(() => router.push("/solve"), 300);
     } catch {
       clearInterval(progressInterval);
-      alert("Something went wrong. Please try again.");
+      stageTimers.forEach(clearTimeout);
+      setErrorMsg("Something went wrong. Please try again.");
       setUploading(false);
     }
   }, [textQuery, router]);
@@ -471,25 +492,59 @@ export default function Home() {
                 </div>
               </div>
 
+              {/* Error message with retry */}
+              {errorMsg && !uploading && (
+                <div className="bg-red-50 border border-red-200 rounded-2xl p-4 text-left">
+                  <div className="flex items-start gap-3">
+                    <div className="shrink-0 w-8 h-8 rounded-full bg-red-100 flex items-center justify-center">
+                      <X className="w-4 h-4 text-red-600" />
+                    </div>
+                    <div className="flex-1">
+                      <p className="text-sm font-semibold text-red-900">Something went wrong</p>
+                      <p className="text-xs text-red-700 mt-0.5">{errorMsg}</p>
+                      <button
+                        onClick={() => setErrorMsg(null)}
+                        className="mt-2 text-xs font-semibold text-red-600 hover:text-red-700 underline"
+                      >
+                        Try again
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              )}
+
               {/* Drop Zone / Uploading State */}
               {uploading ? (
                 <div className="bg-white rounded-2xl border border-border p-6 shadow-sm">
                   <div className="flex flex-col items-center gap-3">
                     <div className="w-10 h-10 rounded-lg bg-primary/5 flex items-center justify-center">
-                      <Image className="w-5 h-5 text-muted/40" />
+                      <Image className="w-5 h-5 text-muted/40 animate-pulse" />
                     </div>
-                    <p className="text-foreground text-sm font-semibold">Uploading</p>
+                    <div className="text-center">
+                      <p className="text-foreground text-sm font-semibold">
+                        {loadingStage === "reading" && "📖 Reading your problem..."}
+                        {loadingStage === "analyzing" && "🧠 Analyzing the math..."}
+                        {loadingStage === "solving" && "✍️ Writing step-by-step solution..."}
+                        {loadingStage === "done" && "✨ Almost done!"}
+                      </p>
+                      <p className="text-[11px] text-muted mt-0.5">
+                        {loadingStage === "reading" && "Detecting equations and numbers"}
+                        {loadingStage === "analyzing" && "Identifying the best approach"}
+                        {loadingStage === "solving" && "Preparing clear explanations"}
+                        {loadingStage === "done" && "Redirecting to your solution"}
+                      </p>
+                    </div>
                     <div className="w-full max-w-xs">
                       <div className="w-full bg-gray-100 rounded-full h-1.5">
                         <div
-                          className="bg-red-400 h-1.5 rounded-full transition-all duration-300"
+                          className="bg-gradient-to-r from-primary to-purple-500 h-1.5 rounded-full transition-all duration-300"
                           style={{ width: `${Math.min(uploadProgress, 100)}%` }}
                         />
                       </div>
                       <p className="text-xs text-muted mt-1 text-right">{Math.round(Math.min(uploadProgress, 100))}%</p>
                     </div>
                     <button
-                      onClick={() => { setUploading(false); setUploadProgress(0); }}
+                      onClick={() => { setUploading(false); setUploadProgress(0); setLoadingStage("reading"); }}
                       className="text-xs text-muted hover:text-foreground border border-border px-4 py-1.5 rounded-lg transition-colors"
                     >
                       Cancel

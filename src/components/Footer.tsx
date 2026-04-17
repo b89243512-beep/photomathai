@@ -1,7 +1,13 @@
 import Link from "next/link";
 import { Logo } from "@/components/Logo";
 
-const footerLinks = [
+const toolLinks = [
+  { label: "Math Solver", href: "/" },
+  { label: "Photo Math Calculator", href: "/calculator" },
+  { label: "Math Games", href: "/math-games" },
+] as const;
+
+const legalLinks = [
   { label: "Privacy Policy", href: "/privacy" },
   { label: "Terms of Service", href: "/terms" },
 ] as const;
@@ -10,7 +16,7 @@ export function Footer() {
   return (
     <footer className="bg-foreground text-white">
       <div className="mx-auto max-w-6xl px-4 py-16">
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-10">
           {/* Brand */}
           <div>
             <Link href="/" className="flex items-center gap-2 text-lg font-bold mb-4">
@@ -22,13 +28,32 @@ export function Footer() {
             </p>
           </div>
 
+          {/* Tools */}
+          <div>
+            <h3 className="font-semibold text-sm uppercase tracking-wider mb-4 text-gray-300">
+              Tools
+            </h3>
+            <ul className="space-y-2.5">
+              {toolLinks.map((link) => (
+                <li key={link.href}>
+                  <Link
+                    href={link.href}
+                    className="text-sm text-gray-400 hover:text-white transition-colors"
+                  >
+                    {link.label}
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          </div>
+
           {/* Legal */}
-          <div className="md:text-right">
+          <div>
             <h3 className="font-semibold text-sm uppercase tracking-wider mb-4 text-gray-300">
               Legal
             </h3>
             <ul className="space-y-2.5">
-              {footerLinks.map((link) => (
+              {legalLinks.map((link) => (
                 <li key={link.href}>
                   <Link
                     href={link.href}

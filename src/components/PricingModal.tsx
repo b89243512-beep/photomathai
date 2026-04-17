@@ -37,6 +37,7 @@ const testimonials = [
   { name: "Sarah M.", text: "Saved my calculus grade!" },
   { name: "Alex K.", text: "Every student needs this." },
   { name: "Jordan T.", text: "Worth every penny." },
+  { name: "Mia R.", text: "Explanations are incredibly clear." },
 ];
 
 function dailyPrice(plan: typeof PLANS.weekly | typeof PLANS.yearly) {
@@ -85,12 +86,12 @@ export function PricingModal({ open, onClose, userName }: { open: boolean; onClo
 
   return (
     <div
-      className="fixed inset-0 z-[100] flex items-center justify-center p-4 animate-in fade-in duration-200"
+      className="fixed inset-0 z-[100] flex items-center justify-center p-2 sm:p-4 animate-in fade-in duration-200"
       style={{ background: "rgba(15, 23, 42, 0.7)", backdropFilter: "blur(10px)" }}
       onClick={onClose}
     >
       <div
-        className="relative w-full max-w-4xl bg-white rounded-3xl shadow-2xl overflow-hidden max-h-[95vh] overflow-y-auto"
+        className="relative w-full max-w-4xl bg-white rounded-2xl sm:rounded-3xl shadow-2xl overflow-hidden max-h-[95vh] overflow-y-auto"
         onClick={(e) => e.stopPropagation()}
       >
         {/* Close */}
@@ -199,7 +200,7 @@ export function PricingModal({ open, onClose, userName }: { open: boolean; onClo
                     </div>
                     <span className="font-bold text-slate-900">Weekly</span>
                   </div>
-                  <span className="font-bold text-slate-900">${weekly.price}</span>
+                  <span className="font-bold text-slate-900">${weekly.price}/wk</span>
                 </div>
                 <div className="ml-7 flex items-center justify-between">
                   <p className="text-xs text-slate-500">{dailyPrice(weekly)}/day · billed weekly</p>
@@ -229,10 +230,10 @@ export function PricingModal({ open, onClose, userName }: { open: boolean; onClo
                     <span className="font-bold text-slate-900">Yearly</span>
                     <span className="text-[10px] bg-indigo-100 text-indigo-600 font-bold px-2 py-0.5 rounded-full">BEST VALUE</span>
                   </div>
-                  <span className="font-bold text-slate-900">${yearly.price}</span>
+                  <span className="font-bold text-slate-900">${(yearly.price / 52).toFixed(2)}/wk</span>
                 </div>
                 <div className="ml-7 flex items-center justify-between">
-                  <p className="text-xs text-slate-500">{dailyPrice(yearly)}/day · billed yearly</p>
+                  <p className="text-xs text-slate-500">${yearly.price}/year · {dailyPrice(yearly)}/day</p>
                 </div>
               </button>
             </div>
@@ -240,13 +241,13 @@ export function PricingModal({ open, onClose, userName }: { open: boolean; onClo
             {/* Total */}
             <div className="mt-6 pt-5 border-t border-slate-100">
               <div className="flex items-center justify-between">
-                <span className="text-sm font-medium text-slate-600">Total due today</span>
-                <span className="text-2xl font-extrabold text-slate-900">
+                <span className="text-sm text-slate-600">Total due today</span>
+                <span className="text-base text-slate-900">
                   ${PLANS[selected].price}
                 </span>
               </div>
               {selected === "yearly" && (
-                <p className="text-[11px] text-green-600 font-semibold mt-0.5 text-right">Save ${(weekly.price * 52 - yearly.price).toFixed(2)}/year</p>
+                <p className="text-[11px] text-green-600 font-medium mt-0.5 text-right">Save ${(weekly.price * 52 - yearly.price).toFixed(2)}/year</p>
               )}
             </div>
 

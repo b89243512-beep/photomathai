@@ -5,6 +5,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { useSession, signIn, signOut } from "next-auth/react";
 import { Logo } from "@/components/Logo";
+import { ThemeToggle } from "@/components/ThemeToggle";
 import { Camera, Menu, X, LogOut, User, Crown } from "lucide-react";
 
 const navLinks = [
@@ -46,7 +47,7 @@ function UserMenu() {
         {session.user?.image ? (
           <Image
             src={session.user.image}
-            alt={session.user.name || "User"}
+            alt={`Profile picture of ${session.user.name || "signed-in user"}`}
             width={32}
             height={32}
             className="rounded-full"
@@ -91,7 +92,7 @@ export function Navbar() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   return (
-    <header className="sticky top-0 z-50 bg-white/80 backdrop-blur-lg border-b border-border">
+    <header className="sticky top-0 z-50 bg-background/80 backdrop-blur-lg border-b border-border">
       <nav className="mx-auto flex max-w-6xl items-center justify-between px-4 py-3">
         <Link
           href="/"
@@ -118,10 +119,12 @@ export function Navbar() {
             <Camera className="w-4 h-4" />
             Solve Now
           </Link>
+          <ThemeToggle />
           <UserMenu />
         </div>
 
         <div className="flex items-center gap-3 md:hidden">
+          <ThemeToggle />
           <UserMenu />
           <button
             type="button"
