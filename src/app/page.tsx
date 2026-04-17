@@ -7,6 +7,7 @@ import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
 import { LoginModal } from "@/components/LoginModal";
 import { PricingModal } from "@/components/PricingModal";
+import { trackConversion, trackEvent } from "@/lib/gtag";
 import {
   Camera,
   Upload,
@@ -172,16 +173,15 @@ export default function Home() {
   const { status, data: session } = useSession();
   const [showPricing, setShowPricing] = useState(false);
 
-  // Show pricing modal once per session after login
+  // Fire sign_up event once per session (pricing modal does NOT auto-open —
+  // user gets their free solve first, paywall only appears when the API
+  // returns requiresUpgrade on the 2nd attempt)
   useEffect(() => {
     if (status === "authenticated") {
-      const shown = sessionStorage.getItem("pricingShown");
-      if (!shown) {
-        const timer = setTimeout(() => {
-          setShowPricing(true);
-          sessionStorage.setItem("pricingShown", "1");
-        }, 800);
-        return () => clearTimeout(timer);
+      const fired = sessionStorage.getItem("signupTracked");
+      if (!fired) {
+        trackEvent("sign_up", { method: "google" });
+        sessionStorage.setItem("signupTracked", "1");
       }
     }
   }, [status]);
@@ -191,6 +191,33 @@ export default function Home() {
     const handler = () => setShowPricing(true);
     window.addEventListener("open-pricing", handler);
     return () => window.removeEventListener("open-pricing", handler);
+  }, []);
+
+  // Google Ads purchase conversion when user returns from Lemon Squeezy with ?upgrade=success
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    const params = new URLSearchParams(window.location.search);
+    if (params.get("upgrade") !== "success") return;
+
+    const plan = sessionStorage.getItem("pendingPlan") || "weekly";
+    const value = plan === "yearly" ? 39.99 : 6.99;
+    const txId = `sub_${Date.now()}_${Math.random().toString(36).slice(2, 8)}`;
+
+    trackConversion("AW-18087268476/lPe-CPKexZ0cEPyg17BD", {
+      value,
+      currency: "USD",
+      transaction_id: txId,
+    });
+    trackEvent("purchase", {
+      value,
+      currency: "USD",
+      transaction_id: txId,
+      items: [{ item_name: `PhotoMath AI Pro — ${plan}`, price: value, quantity: 1 }],
+    });
+
+    sessionStorage.removeItem("pendingPlan");
+    // Clean the URL so conversion isn't re-fired on reload
+    window.history.replaceState({}, "", window.location.pathname);
   }, []);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const dropZoneRef = useRef<HTMLDivElement>(null);

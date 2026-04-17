@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { X, Check, Sparkles, Crown, Infinity as InfinityIcon, BookOpen, Zap, Camera, Brain, Star, Loader2 } from "lucide-react";
+import { trackEvent } from "@/lib/gtag";
 
 type Plan = "weekly" | "yearly";
 
@@ -62,6 +63,17 @@ export function PricingModal({ open, onClose, userName }: { open: boolean; onClo
     if (loading) return;
     setLoading(true);
     setError(null);
+
+    // Save plan for conversion tracking on return
+    try { sessionStorage.setItem("pendingPlan", selected); } catch {}
+
+    // Google Ads: begin_checkout event
+    trackEvent("begin_checkout", {
+      value: PLANS[selected].price,
+      currency: "USD",
+      items: [{ item_name: `PhotoMath AI Pro — ${PLANS[selected].label}`, price: PLANS[selected].price, quantity: 1 }],
+    });
+
     try {
       const res = await fetch("/api/checkout", {
         method: "POST",
