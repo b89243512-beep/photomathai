@@ -203,7 +203,7 @@ export default function Home() {
     const value = plan === "yearly" ? 39.99 : 6.99;
     const txId = `sub_${Date.now()}_${Math.random().toString(36).slice(2, 8)}`;
 
-    trackConversion("AW-18087268476/lPe-CPKexZ0cEPyg17BD", {
+    trackConversion("AW-18087268476/rZPlCLi0858cEPyg17BD", {
       value,
       currency: "USD",
       transaction_id: txId,
