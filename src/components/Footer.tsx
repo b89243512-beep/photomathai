@@ -3,6 +3,7 @@ import { Logo } from "@/components/Logo";
 
 const toolLinks = [
   { label: "Math Solver", href: "/" },
+  { label: "PhotoMath AI Expert", href: "/expert" },
   { label: "Photo Math Calculator", href: "/calculator" },
   { label: "Math Games", href: "/math-games" },
 ] as const;

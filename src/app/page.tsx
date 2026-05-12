@@ -200,7 +200,7 @@ export default function Home() {
     if (params.get("upgrade") !== "success") return;
 
     const plan = sessionStorage.getItem("pendingPlan") || "weekly";
-    const value = plan === "yearly" ? 39.99 : 6.99;
+    const value = plan === "yearly" ? 19.99 : 6.99;
     const txId = `sub_${Date.now()}_${Math.random().toString(36).slice(2, 8)}`;
 
     trackConversion("AW-18087268476/rZPlCLi0858cEPyg17BD", {

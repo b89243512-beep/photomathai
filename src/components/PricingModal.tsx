@@ -18,10 +18,10 @@ const PLANS = {
   yearly: {
     id: "yearly",
     label: "Yearly",
-    price: 39.99,
+    price: 19.99,
     period: "year",
     days: 365,
-    savings: "Save 89%",
+    savings: "Save 94%",
   },
 } as const;
 
