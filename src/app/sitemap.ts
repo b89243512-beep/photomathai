@@ -5,6 +5,8 @@ export default function sitemap(): MetadataRoute.Sitemap {
 
   return [
     { url: baseUrl },
+    { url: `${baseUrl}/expert` },
+    { url: `${baseUrl}/microsoft-math-solver` },
     { url: `${baseUrl}/calculator` },
     { url: `${baseUrl}/math-games` },
     { url: `${baseUrl}/privacy` },

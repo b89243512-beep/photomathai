@@ -18,12 +18,12 @@ import {
 } from "lucide-react";
 
 export const metadata: Metadata = {
-  title: "PhotoMath AI Expert — Advanced Math Solver for University & Research",
+  title: "PhotoMath AI Expert , Advanced Math Solver for University & Research",
   description:
     "PhotoMath AI Expert delivers PhD-level step-by-step solutions for advanced calculus, linear algebra, real analysis, abstract algebra and beyond. Built for university students, researchers, and tutors.",
   alternates: { canonical: "/expert" },
   openGraph: {
-    title: "PhotoMath AI Expert — Advanced Math Solver",
+    title: "PhotoMath AI Expert , Advanced Math Solver",
     description:
       "PhD-level, fully worked solutions with rigorous step-by-step reasoning. Built for university students and researchers.",
     type: "website",
@@ -35,19 +35,19 @@ const expertFeatures = [
     icon: Brain,
     title: "PhD-Level Reasoning",
     description:
-      "Every solution is treated like a proof. Expert mode shows assumptions, theorems used, edge cases, and the full chain of logic — not just numeric answers.",
+      "Every solution is treated like a proof. Expert mode shows assumptions, theorems used, edge cases, and the full chain of logic , not just numeric answers.",
   },
   {
     icon: Sigma,
     title: "Rigorous Notation",
     description:
-      "Solutions are formatted using clean mathematical notation — sums, integrals, limits, matrices, set-builder — exactly as you'd write them on paper.",
+      "Solutions are formatted using clean mathematical notation , sums, integrals, limits, matrices, set-builder , exactly as you'd write them on paper.",
   },
   {
     icon: ScrollText,
     title: "Proof-Style Walkthroughs",
     description:
-      "For theorems and abstract problems, Expert produces structured proofs with stated lemmas, justifications, and a final QED — ready for class submission.",
+      "For theorems and abstract problems, Expert produces structured proofs with stated lemmas, justifications, and a final QED , ready for class submission.",
   },
   {
     icon: Microscope,
@@ -59,7 +59,7 @@ const expertFeatures = [
     icon: BookOpenCheck,
     title: "Multiple Solution Paths",
     description:
-      "When more than one method works, Expert presents alternatives — algebraic vs geometric, direct vs by induction — so you can choose the approach you prefer.",
+      "When more than one method works, Expert presents alternatives , algebraic vs geometric, direct vs by induction , so you can choose the approach you prefer.",
   },
   {
     icon: FileText,
@@ -144,7 +144,7 @@ export default function ExpertPage() {
                 Advanced math solver built for university, research, and tutors.
               </p>
               <p className="mt-4 text-base text-muted leading-relaxed max-w-xl">
-                Expert mode goes beyond plain answers — full proofs, theorem citations,
+                Expert mode goes beyond plain answers , full proofs, theorem citations,
                 edge case warnings, and clean LaTeX export. Trusted by graduate students
                 and instructors who can&apos;t afford to be wrong.
               </p>
@@ -294,7 +294,7 @@ export default function ExpertPage() {
                 Advanced topics <span className="gradient-text">covered</span>
               </h2>
               <p className="text-muted mt-4 max-w-xl mx-auto text-lg">
-                From undergraduate analysis to graduate-level abstract math — Expert handles it.
+                From undergraduate analysis to graduate-level abstract math , Expert handles it.
               </p>
             </div>
             <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
@@ -349,7 +349,7 @@ export default function ExpertPage() {
               Ready for solutions that hold up to a thesis defense?
             </h2>
             <p className="text-white/85 mt-4 text-lg max-w-xl mx-auto">
-              Expert mode is included with PhotoMath AI Pro. Start with a free solve — no credit card required.
+              Expert mode is included with PhotoMath AI Pro. Start with a free solve , no credit card required.
             </p>
             <Link
               href="/?mode=expert"

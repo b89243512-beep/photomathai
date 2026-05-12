@@ -34,7 +34,7 @@ const features = [
     icon: Camera,
     title: "Snap & Solve Instantly",
     description:
-      "Take a photo of any math problem — handwritten or printed — and our AI will recognize it instantly. No tedious typing required.",
+      "Take a photo of any math problem , handwritten or printed , and our AI will recognize it instantly. No tedious typing required.",
   },
   {
     icon: BookOpen,
@@ -64,7 +64,7 @@ const features = [
     icon: Globe,
     title: "Works on Any Device",
     description:
-      "Access Free PhotoMath AI from your phone, tablet, or computer. Just open your browser and start solving — no app download needed.",
+      "Access Free PhotoMath AI from your phone, tablet, or computer. Just open your browser and start solving , no app download needed.",
   },
 ];
 
@@ -122,7 +122,7 @@ const faqs = [
   {
     question: "Can I use Free PhotoMath AI on my phone?",
     answer:
-      "Absolutely! Free PhotoMath AI works seamlessly on any device with a web browser — smartphones, tablets, laptops, and desktop computers. You can even take photos directly from your phone camera and upload them.",
+      "Absolutely! Free PhotoMath AI works seamlessly on any device with a web browser , smartphones, tablets, laptops, and desktop computers. You can even take photos directly from your phone camera and upload them.",
   },
   {
     question: "Does Free PhotoMath AI work with handwritten math?",
@@ -173,7 +173,7 @@ export default function Home() {
   const { status, data: session } = useSession();
   const [showPricing, setShowPricing] = useState(false);
 
-  // Fire sign_up event once per session (pricing modal does NOT auto-open —
+  // Fire sign_up event once per session (pricing modal does NOT auto-open ,
   // user gets their free solve first, paywall only appears when the API
   // returns requiresUpgrade on the 2nd attempt)
   useEffect(() => {
@@ -212,7 +212,7 @@ export default function Home() {
       value,
       currency: "USD",
       transaction_id: txId,
-      items: [{ item_name: `PhotoMath AI Pro — ${plan}`, price: value, quantity: 1 }],
+      items: [{ item_name: `PhotoMath AI Pro , ${plan}`, price: value, quantity: 1 }],
     });
 
     sessionStorage.removeItem("pendingPlan");
@@ -465,7 +465,7 @@ export default function Home() {
               <span className="gradient-text">Math Problem Solver</span>
             </h1>
             <p className="text-sm md:text-base text-muted mt-2 max-w-xl mx-auto leading-relaxed">
-              Snap a photo of any math problem and get instant, step-by-step solutions. Algebra, calculus, geometry, trigonometry and more — free, no sign-up needed.
+              Snap a photo of any math problem and get instant, step-by-step solutions. Algebra, calculus, geometry, trigonometry and more , free, no sign-up needed.
             </p>
 
             {/* Chat Bar & Upload Area */}
@@ -635,7 +635,7 @@ export default function Home() {
                 Why Choose <span className="gradient-text">Free PhotoMath AI</span>?
               </h2>
               <p className="text-muted mt-4 max-w-2xl mx-auto text-lg">
-                The most powerful AI-driven math solver available online — designed to help students learn, not just find answers.
+                The most powerful AI-driven math solver available online , designed to help students learn, not just find answers.
               </p>
             </div>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -696,14 +696,14 @@ export default function Home() {
                 The Ultimate Free PhotoMath AI Tool for Students and Learners
               </h2>
               <p>
-                Mathematics remains one of the most challenging subjects for students at every level, from middle school through university. Whether you are struggling with a tricky algebra equation, trying to make sense of calculus derivatives, or working through a complex geometry proof, having access to the right tools can transform your learning experience. Free PhotoMath AI was built to be that tool — a smart, reliable, and completely free math problem solver that turns any photo of a math question into a clear, step-by-step solution.
+                Mathematics remains one of the most challenging subjects for students at every level, from middle school through university. Whether you are struggling with a tricky algebra equation, trying to make sense of calculus derivatives, or working through a complex geometry proof, having access to the right tools can transform your learning experience. Free PhotoMath AI was built to be that tool , a smart, reliable, and completely free math problem solver that turns any photo of a math question into a clear, step-by-step solution.
               </p>
 
               <h3 className="text-xl font-bold text-foreground mt-8 mb-4">
                 How Free PhotoMath AI Transforms Your Study Sessions
               </h3>
               <p>
-                Traditional math tutoring can be expensive and difficult to schedule. Textbook answer keys rarely show the work behind the solution. Free PhotoMath AI bridges this gap by providing instant, detailed explanations for every problem you encounter. Simply take a photo of your homework, paste it into the solver, or type the equation directly — and within seconds you will receive a complete breakdown of the solution method. This is not just about getting answers; it is about understanding the reasoning behind each step so you can apply the same logic to future problems.
+                Traditional math tutoring can be expensive and difficult to schedule. Textbook answer keys rarely show the work behind the solution. Free PhotoMath AI bridges this gap by providing instant, detailed explanations for every problem you encounter. Simply take a photo of your homework, paste it into the solver, or type the equation directly , and within seconds you will receive a complete breakdown of the solution method. This is not just about getting answers; it is about understanding the reasoning behind each step so you can apply the same logic to future problems.
               </p>
 
               <h3 className="text-xl font-bold text-foreground mt-8 mb-4">
@@ -731,7 +731,7 @@ export default function Home() {
                 Accessible Anytime, Anywhere, on Any Device
               </h3>
               <p>
-                Free PhotoMath AI is a web-based platform that requires no downloads, installations, or account registrations. It runs smoothly on smartphones, tablets, laptops, and desktop computers. This means you can access your math solver wherever you are — at home, in the library, on the bus, or right before an exam. The responsive design ensures a seamless experience regardless of screen size, and the fast processing times mean you spend more time learning and less time waiting. Because there are no subscription fees or usage limits, you can rely on Free PhotoMath AI as your go-to study companion throughout the entire school year and beyond.
+                Free PhotoMath AI is a web-based platform that requires no downloads, installations, or account registrations. It runs smoothly on smartphones, tablets, laptops, and desktop computers. This means you can access your math solver wherever you are , at home, in the library, on the bus, or right before an exam. The responsive design ensures a seamless experience regardless of screen size, and the fast processing times mean you spend more time learning and less time waiting. Because there are no subscription fees or usage limits, you can rely on Free PhotoMath AI as your go-to study companion throughout the entire school year and beyond.
               </p>
 
               <h3 className="text-xl font-bold text-foreground mt-8 mb-4">

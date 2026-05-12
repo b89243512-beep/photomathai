@@ -8,7 +8,7 @@ function shuffle(): number[] {
     const j = Math.floor(Math.random() * (i + 1));
     [arr[i], arr[j]] = [arr[j], arr[i]];
   }
-  // Ensure solvable — for 3x3, inversions must be even
+  // Ensure solvable , for 3x3, inversions must be even
   let inv = 0;
   for (let i = 0; i < arr.length - 1; i++) {
     for (let j = i + 1; j < arr.length; j++) {

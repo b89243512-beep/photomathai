@@ -20,7 +20,7 @@ export const metadata: Metadata = {
   openGraph: {
     title: "Free Photo Math Calculator - Step-by-Step Math Solver",
     description:
-      "Solve any math expression instantly with step-by-step solutions. Algebra, trigonometry, logarithms and more — completely free.",
+      "Solve any math expression instantly with step-by-step solutions. Algebra, trigonometry, logarithms and more , completely free.",
     url: "https://photomathai.com/calculator",
     type: "website",
   },

@@ -66,7 +66,7 @@ export function LoginModal({ open, onClose }: { open: boolean; onClose: () => vo
               Sign in to continue
             </h2>
             <p className="text-sm text-slate-500 mt-2 leading-relaxed">
-              Get instant AI-powered math solutions. Free forever — no credit card needed.
+              Get instant AI-powered math solutions. Free forever , no credit card needed.
             </p>
           </div>
 

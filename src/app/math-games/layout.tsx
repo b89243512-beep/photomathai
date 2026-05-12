@@ -3,7 +3,7 @@ import type { Metadata } from "next";
 export const metadata: Metadata = {
   title: "Free Math Games Online - 9 Playable Math Games for All Ages",
   description:
-    "Play 9 free math games online instantly — Quick Math, Memory Sequence, Times Tables, Prime Hunt, and more. No download required. Fun way to practice mental math for kids, students, and adults.",
+    "Play 9 free math games online instantly , Quick Math, Memory Sequence, Times Tables, Prime Hunt, and more. No download required. Fun way to practice mental math for kids, students, and adults.",
   keywords: [
     "math games online", "free math games", "math games for kids",
     "mental math games", "math practice games", "quick math game",

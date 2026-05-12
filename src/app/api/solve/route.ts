@@ -117,7 +117,7 @@ Be thorough but clear. Explain each step so a student can learn from it.
 If the image is not a math problem, politely let the user know and try to help anyway.`;
 
 /* ------------------------------------------------------------------ */
-/*  POST /api/solve — initial solve (image or text)                    */
+/*  POST /api/solve , initial solve (image or text)                    */
 /* ------------------------------------------------------------------ */
 
 export async function POST(request: NextRequest) {
@@ -133,7 +133,7 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: "Please sign in to continue." }, { status: 401 });
     }
 
-    // Fetch DB user — try email first (most reliable), fall back to id
+    // Fetch DB user , try email first (most reliable), fall back to id
     let dbUser = null;
     if (session.user.email) {
       const { data } = await supabaseAdmin
@@ -152,7 +152,7 @@ export async function POST(request: NextRequest) {
       dbUser = data;
     }
 
-    // JIT upsert — create user if not in DB
+    // JIT upsert , create user if not in DB
     if (!dbUser && session.user.email) {
       const created = await upsertUser({
         googleId: session.user.id,
@@ -182,7 +182,7 @@ export async function POST(request: NextRequest) {
         );
       }
     } else {
-      // Pro users — daily limit
+      // Pro users , daily limit
       const dailyLimit = DAILY_LIMITS[plan];
       const todayCount = await getTodayUsage(dbUser.id, "solve");
       if (todayCount >= dailyLimit) {
@@ -269,7 +269,7 @@ export async function POST(request: NextRequest) {
     const result = await model.generateContent(parts);
     const text = result.response.text();
 
-    // Log usage (fire and forget) — DB id, not session user.id (same in most cases)
+    // Log usage (fire and forget) , DB id, not session user.id (same in most cases)
     logUsage(dbUser.id, "solve").catch(() => {});
 
     return NextResponse.json({ solution: text, plan });
@@ -283,7 +283,7 @@ export async function POST(request: NextRequest) {
 }
 
 /* ------------------------------------------------------------------ */
-/*  PUT /api/solve — follow-up chat                                    */
+/*  PUT /api/solve , follow-up chat                                    */
 /* ------------------------------------------------------------------ */
 
 export async function PUT(request: NextRequest) {
@@ -307,7 +307,7 @@ export async function PUT(request: NextRequest) {
       );
     }
 
-    // Fetch DB user — follow-ups require Pro plan
+    // Fetch DB user , follow-ups require Pro plan
     let dbUser = null;
     if (session.user.email) {
       const { data } = await supabaseAdmin
@@ -352,7 +352,7 @@ ${safeContext}
 
 The student now asks a follow-up question: "${safeQuestion}"
 
-Provide a clear, helpful response. Use markdown formatting. Do NOT use LaTeX notation — write math in plain text.`;
+Provide a clear, helpful response. Use markdown formatting. Do NOT use LaTeX notation , write math in plain text.`;
 
     const result = await model.generateContent(prompt);
     const text = result.response.text();

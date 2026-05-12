@@ -296,7 +296,7 @@ export default function CalculatorPage() {
               </span>
             </h1>
             <p className="text-sm md:text-base text-gray-500 mt-2 max-w-2xl mx-auto leading-relaxed">
-              Instant, step-by-step solutions for any math expression you can think of. Whether you need to solve algebra equations, evaluate trigonometric functions, compute logarithms, or work through calculus problems — the Free Photo Math Calculator gives you detailed breakdowns of every step, completely free and with no sign-up required.
+              Instant, step-by-step solutions for any math expression you can think of. Whether you need to solve algebra equations, evaluate trigonometric functions, compute logarithms, or work through calculus problems , the Free Photo Math Calculator gives you detailed breakdowns of every step, completely free and with no sign-up required.
             </p>
           </div>
         </section>
@@ -443,7 +443,7 @@ export default function CalculatorPage() {
                 Free Photo Math Calculator: Your Complete Online Math Solver
               </h2>
               <p>
-                The Free Photo Math Calculator is a powerful, browser-based tool that lets you solve mathematical expressions instantly with clear, step-by-step explanations. Whether you are working on basic arithmetic, algebraic equations, trigonometric identities, or logarithmic expressions, this calculator handles it all — completely free and without requiring any sign-up or software download.
+                The Free Photo Math Calculator is a powerful, browser-based tool that lets you solve mathematical expressions instantly with clear, step-by-step explanations. Whether you are working on basic arithmetic, algebraic equations, trigonometric identities, or logarithmic expressions, this calculator handles it all , completely free and without requiring any sign-up or software download.
               </p>
 
               <h3 className="text-xl font-bold text-gray-900 mt-8 mb-4">
@@ -464,7 +464,7 @@ export default function CalculatorPage() {
                 Designed for Students and Educators
               </h3>
               <p>
-                The intuitive keypad interface is designed to mimic the layout of scientific calculators that students are already familiar with. The organized tab system separates basic operations, advanced functions, variables, and comparison operators into logical groups, making it easy to find exactly what you need. The responsive design ensures that the calculator works perfectly on phones, tablets, and laptops, so you can solve problems wherever you are — in class, at the library, or at home.
+                The intuitive keypad interface is designed to mimic the layout of scientific calculators that students are already familiar with. The organized tab system separates basic operations, advanced functions, variables, and comparison operators into logical groups, making it easy to find exactly what you need. The responsive design ensures that the calculator works perfectly on phones, tablets, and laptops, so you can solve problems wherever you are , in class, at the library, or at home.
               </p>
 
               <h3 className="text-xl font-bold text-gray-900 mt-8 mb-4">

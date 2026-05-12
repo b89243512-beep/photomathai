@@ -4,6 +4,7 @@ import { Logo } from "@/components/Logo";
 const toolLinks = [
   { label: "Math Solver", href: "/" },
   { label: "PhotoMath AI Expert", href: "/expert" },
+  { label: "Microsoft Math Solver Online", href: "/microsoft-math-solver" },
   { label: "Photo Math Calculator", href: "/calculator" },
   { label: "Math Games", href: "/math-games" },
 ] as const;
@@ -25,7 +26,7 @@ export function Footer() {
               <span>Free PhotoMath AI</span>
             </Link>
             <p className="text-sm text-gray-400 max-w-md leading-relaxed">
-              The smartest way to solve math problems. Simply upload a photo of any math question and receive detailed, step-by-step solutions powered by advanced AI — completely free.
+              The smartest way to solve math problems. Simply upload a photo of any math question and receive detailed, step-by-step solutions powered by advanced AI , completely free.
             </p>
           </div>
 

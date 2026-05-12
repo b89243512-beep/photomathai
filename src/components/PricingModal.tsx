@@ -71,7 +71,7 @@ export function PricingModal({ open, onClose, userName }: { open: boolean; onClo
     trackEvent("begin_checkout", {
       value: PLANS[selected].price,
       currency: "USD",
-      items: [{ item_name: `PhotoMath AI Pro — ${PLANS[selected].label}`, price: PLANS[selected].price, quantity: 1 }],
+      items: [{ item_name: `PhotoMath AI Pro , ${PLANS[selected].label}`, price: PLANS[selected].price, quantity: 1 }],
     });
 
     try {
@@ -179,7 +179,7 @@ export function PricingModal({ open, onClose, userName }: { open: boolean; onClo
               {testimonials.map((t) => (
                 <div key={t.name} className="bg-white rounded-xl border border-slate-200 px-3 py-2">
                   <p className="text-xs text-slate-600">&ldquo;{t.text}&rdquo;</p>
-                  <p className="text-[10px] text-slate-400 mt-0.5">— {t.name}</p>
+                  <p className="text-[10px] text-slate-400 mt-0.5">, {t.name}</p>
                 </div>
               ))}
             </div>
@@ -219,7 +219,7 @@ export function PricingModal({ open, onClose, userName }: { open: boolean; onClo
                 </div>
               </button>
 
-              {/* Yearly — recommended */}
+              {/* Yearly , recommended */}
               <button
                 onClick={() => setSelected("yearly")}
                 className={`relative w-full text-left rounded-2xl border-2 p-4 transition-all ${

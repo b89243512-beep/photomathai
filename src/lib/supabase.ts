@@ -26,7 +26,7 @@ export interface DbUser {
   last_login_at: string;
 }
 
-/** Upsert user on login — creates row if new, updates last_login_at if exists */
+/** Upsert user on login , creates row if new, updates last_login_at if exists */
 export async function upsertUser(params: {
   googleId: string;
   email: string;
@@ -125,7 +125,7 @@ export async function saveSolution(params: {
   if (error) console.error("saveSolution error:", error);
 }
 
-/** Daily usage limits per plan. Free tier disabled — must upgrade to Pro. */
+/** Daily usage limits per plan. Free tier disabled , must upgrade to Pro. */
 export const DAILY_LIMITS = {
   free: 0,
   pro: 1000,

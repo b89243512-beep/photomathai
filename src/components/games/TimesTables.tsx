@@ -52,7 +52,7 @@ export function TimesTables() {
     return (
       <div className="text-center py-10">
         <Trophy className="w-14 h-14 text-blue-500 mx-auto mb-3" />
-        <h3 className="text-2xl font-bold text-slate-900">Table of {table} — Done!</h3>
+        <h3 className="text-2xl font-bold text-slate-900">Table of {table} , Done!</h3>
         <p className="text-5xl font-extrabold text-blue-500 mt-3">{score}<span className="text-2xl text-slate-400">/10</span></p>
         <div className="mt-6 flex items-center justify-center gap-3">
           <button onClick={() => setTable(table)} className="px-6 py-2.5 rounded-xl bg-blue-500 text-white font-semibold hover:bg-blue-600 transition-colors">
