@@ -15,7 +15,7 @@ const inter = Inter({
 export const metadata: Metadata = {
   metadataBase: new URL("https://photomathai.com"),
   title: {
-    default: "Free PhotoMath AI Online - Solve Any Math Problem from a Photo Instantly",
+    default: "Free PhotoMath AI Online - AI Math Solver - Google PhotoMath",
     template: "%s | Free PhotoMath AI",
   },
   description:
@@ -37,7 +37,7 @@ export const metadata: Metadata = {
     "math photo scanner",
   ],
   openGraph: {
-    title: "Free PhotoMath AI Online - Solve Any Math Problem from a Photo",
+    title: "Free PhotoMath AI Online - AI Math Solver - Google PhotoMath",
     description:
       "Upload a photo of any math problem and get instant step-by-step solutions powered by AI. Completely free, no sign-up required.",
     type: "website",
@@ -46,7 +46,7 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "Free PhotoMath AI Online - Solve Any Math Problem from a Photo",
+    title: "Free PhotoMath AI Online - AI Math Solver - Google PhotoMath",
     description:
       "Upload a photo of any math problem and get instant step-by-step solutions powered by AI. Completely free, no sign-up required.",
   },
