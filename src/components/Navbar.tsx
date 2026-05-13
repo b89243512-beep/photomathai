@@ -9,10 +9,10 @@ import { ThemeToggle } from "@/components/ThemeToggle";
 import { Camera, Menu, X, LogOut, User, Crown } from "lucide-react";
 
 const navLinks = [
+  { href: "/solvers", label: "Solvers" },
   { href: "/expert", label: "Expert" },
   { href: "/calculator", label: "Calculator" },
   { href: "/math-games", label: "Math Games" },
-  { href: "#features", label: "Features" },
   { href: "#faq", label: "FAQ" },
 ] as const;
 
