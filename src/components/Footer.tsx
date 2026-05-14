@@ -28,6 +28,7 @@ const solverLinks = [
 const legalLinks = [
   { label: "Privacy Policy", href: "/privacy" },
   { label: "Terms of Service", href: "/terms" },
+  { label: "Support", href: "mailto:personalizationprojects@gmail.com" },
 ] as const;
 
 export function Footer() {
